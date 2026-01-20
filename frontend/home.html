@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#85e0d1",
+                        "background-light": "#fbfaf9",
+                        "background-dark": "#131f1d",
+                        "accent-blue": "#A4D8E8",
+                        "pastel-pink": "#FAD9E6",
+                        "pastel-yellow": "#FFF3C7",
+                        "pastel-mint": "#C6EBDD"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100dvh;
+        }
+        .confetti-xo {
+            position: absolute;
+            font-weight: 800;
+            user-select: none;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+        .difficulty-btn.active {
+  background-color: white;
+  color: #121716;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transform: scale(1.05);
+}
+
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark flex flex-col font-display overflow-x-hidden relative">
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<span class="confetti-xo text-pastel-pink text-4xl top-[8%] left-[10%] rotate-12">X</span>
+<span class="confetti-xo text-pastel-yellow text-3xl top-[25%] right-[15%] -rotate-12">O</span>
+<span class="confetti-xo text-pastel-mint text-5xl top-[45%] left-[5%] rotate-45">O</span>
+<span class="confetti-xo text-primary/30 text-4xl top-[65%] right-[8%] -rotate-6">X</span>
+<span class="confetti-xo text-pastel-pink text-3xl bottom-[15%] left-[12%] rotate-12">O</span>
+<span class="confetti-xo text-accent-blue/30 text-5xl bottom-[5%] right-[20%] -rotate-12">X</span>
+</div>
+<header class="relative z-20 flex items-center justify-between px-6 py-8">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-12 h-12 rounded-full bg-pastel-mint border-2 border-white dark:border-gray-800 shadow-sm overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuQS6j-Ra25UCKwABgsBpenDivCBtihkT_n2WvH5MEGqoJTkPgl0Fpr7s4xO8xBbGwnV0Li1R4dZvyvCFqRNo4JqrQch5Fo8ui7X3e7D6bHYHiRF4xPIpkuCNKUCTO0vtqcrXAduUxxpktUiPrFCyVgbSidOScHmQhRRXW-wjwAYCREQ-JsCv0Jfn1D2lAKRwXzCt0cJUJzdtVT2kBw9ygTxS2DJKEjHreqrbWW5Tk0BLSu920pKD9A-PUb4-Y_Umkxalb6sPW59Y"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></div>
+</div>
+<h3 id="playerName"
+    class="text-[#121716] dark:text-white font-bold text-lg leading-tight">
+  Player
+</h3>
+</div>
+</header>
+<main class="relative z-20 flex-1 px-6 pb-10 space-y-6">
+<div class="mb-2">
+<h1 class="text-3xl font-extrabold text-[#121716] dark:text-white tracking-tight">Choose Mode</h1>
+<p class="text-gray-500 dark:text-gray-400 font-medium">Pick your challenge for today</p>
+</div>
+<div class="bg-pastel-mint/40 dark:bg-pastel-mint/10 p-6 rounded-2xl border border-pastel-mint/50 dark:border-pastel-mint/20 shadow-sm transition-transform active:scale-[0.98]">
+<div class="flex items-center gap-4 mb-5">
+<div class="size-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center text-pastel-mint shadow-sm">
+<span class="material-symbols-outlined text-3xl font-bold">smart_toy</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-[#121716] dark:text-white">Play vs CPU</h2>
+<p class="text-sm text-gray-500 dark:text-gray-400">Test your skills against AI</p>
+</div>
+</div>
+<button
+  id="cpuStartBtn"
+  class="w-full mt-4 bg-white dark:bg-gray-800 py-3 rounded-xl font-bold text-[#121716] dark:text-white shadow-sm border border-black/5"
+>
+  Start Game
+</button>
+
+</div>
+<button 
+  id="localMultiplayerBtn"
+  class="w-full text-left bg-pastel-pink/40 dark:bg-pastel-pink/10 p-6 rounded-2xl border border-pastel-pink/50 dark:border-pastel-pink/20 shadow-sm flex items-center justify-between group transition-transform active:scale-[0.98]"
+>
+<div class="flex items-center gap-4">
+<div class="size-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center text-pastel-pink shadow-sm">
+<span class="material-symbols-outlined text-3xl font-bold">groups</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-[#121716] dark:text-white">Local Multiplayer</h2>
+<p class="text-sm text-gray-500 dark:text-gray-400">Two players, one device</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+</main>
+<nav class="relative z-30 bg-white/80 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 pb-8 pt-3 px-10 flex justify-center items-center">
+
+  <a href="view-profile.html"
+     class="flex flex-col items-center gap-1 text-gray-400">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[10px] font-bold">Profile</span>
+  </a>
+
+</nav>
+<div class="fixed top-[-10%] right-[-10%] w-64 h-64 bg-accent-blue/10 rounded-full blur-3xl -z-10"></div>
+<div class="fixed bottom-[15%] left-[-5%] w-48 h-48 bg-pastel-pink/10 rounded-full blur-2xl -z-10"></div>
+<div class="fixed top-[40%] left-[20%] w-32 h-32 bg-pastel-yellow/10 rounded-full blur-2xl -z-10"></div>
+<script>
+  const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+
+  difficultyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // remove active from all
+      difficultyButtons.forEach(b => b.classList.remove('active'));
+
+      // add active to clicked one
+      btn.classList.add('active');
+    });
+  });
+</script>
+<script>
+  const localMultiplayerBtn = document.getElementById("localMultiplayerBtn");
+
+  localMultiplayerBtn.addEventListener("click", () => {
+    window.location.href = "local-multi.html";
+  });
+</script>
+<script>
+  const cpuStartBtn = document.getElementById("cpuStartBtn");
+
+  cpuStartBtn.addEventListener("click", () => {
+    window.location.href = "cpu-vs-human.html";
+  });
+</script>
+<script>
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  if (currentUser) {
+    const nameEl = document.getElementById("playerName");
+
+    // Prefer full name, fallback to email
+    nameEl.textContent = currentUser.fullName || currentUser.email;
+  } else {
+    // Safety: if user opens home.html without login
+    window.location.href = "login.html";
+  }
+</script>
+</body>
+</html>

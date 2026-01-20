@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - Tic-Tac-Toe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#85e0d1",
+                        "background-light": "#fbfaf9",
+                        "background-dark": "#131f1d",
+                        "accent-peach": "#F9DCCF",
+                        "accent-yellow": "#FDF6CC",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .soft-shadow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+        }
+        .achievement-badge {
+            transition: transform 0.2s ease;
+        }
+        .achievement-badge:active {
+            transform: scale(0.95);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#121716] dark:text-white transition-colors duration-300">
+<div class="max-w-[480px] mx-auto min-h-screen flex flex-col pb-10">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-between">
+<a href="home.html"
+   class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-zinc-800 soft-shadow">
+  <span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</a>
+</header>
+<!-- ProfileHeader -->
+<section class="px-6 py-6 flex flex-col items-center">
+<div class="relative mb-4">
+<div
+  id="avatar"
+  class="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-800 bg-cover bg-center soft-shadow overflow-hidden"
+  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCT9g9l0PMFJD6-Vyz-bqC0LkBaHIfa3KL_tja09a1DjqE8qWdsIAqa89AnoG15dwCQe27oD__aPFbEyP9tJ7v789wDWTfcyMrvUos9-2zzhLxC5nQdss3KKsxnBLK3iUkITZE22i0-9lFH-mg2cB8E3ngCcE4p8j_FWuhOOy7jiVNsYjrCJrIf3Sfu7KAsCZtgZBNG1vI2OhQ7Nrw1y6wcfuoP4N7nnk3feoBYmAY0QVu8sKduKL9usgxTHFC-gEtcQ8yaI219LSk");'>
+</div>
+<button id="editProfileBtn"
+  class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full border-4 border-background-light dark:border-background-dark soft-shadow flex items-center justify-center">
+  <span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+
+</div>
+<div class="text-center">
+<input
+  id="profileName"
+  type="text"
+  class="text-2xl font-extrabold tracking-tight text-center bg-transparent focus:outline-none hidden"
+ />
+
+<h2 id="profileNameText"
+    class="text-2xl font-extrabold tracking-tight">
+  Alex J.
+</h2>
+<div class="mt-1 inline-flex items-center px-3 py-1 rounded-full bg-primary/20 text-[#2D5A53] dark:text-primary text-xs font-bold uppercase tracking-wider">
+                    Lv. 14 Grandmaster
+                </div>
+</div>
+</section>
+<!-- Stats Section (Bento Grid) -->
+<section class="px-6 mt-4">
+<h3 class="text-lg font-extrabold mb-4 px-1">Statistics</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white dark:bg-zinc-800 p-5 rounded-xl soft-shadow border border-zinc-50 dark:border-zinc-700">
+<p class="text-zinc-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">Games</p>
+<p class="text-2xl font-extrabold tracking-tighter">152</p>
+</div>
+<div class="bg-primary/10 dark:bg-primary/5 p-5 rounded-xl soft-shadow border border-primary/20">
+<p class="text-primary dark:text-primary text-xs font-bold uppercase tracking-widest mb-1">Wins</p>
+<p class="text-2xl font-extrabold tracking-tighter text-[#2D5A53] dark:text-primary">84</p>
+</div>
+<div class="bg-[#F9DCCF]/20 dark:bg-accent-peach/5 p-5 rounded-xl soft-shadow border border-[#F9DCCF]/40">
+<p class="text-[#E67E50] text-xs font-bold uppercase tracking-widest mb-1">Losses</p>
+<p class="text-2xl font-extrabold tracking-tighter text-[#E67E50]">42</p>
+</div>
+<div class="bg-accent-yellow/30 dark:bg-accent-yellow/5 p-5 rounded-xl soft-shadow border border-accent-yellow">
+<p class="text-[#B59B00] text-xs font-bold uppercase tracking-widest mb-1">Draws</p>
+<p class="text-2xl font-extrabold tracking-tighter text-[#B59B00]">26</p>
+</div>
+</div>
+</section>
+<!-- Bottom Tab Bar Mockup (Floating) -->
+</div>
+<script>
+const editBtn = document.getElementById("editProfileBtn");
+const nameInput = document.getElementById("profileName");
+const nameText = document.getElementById("profileNameText");
+const avatar = document.getElementById("avatar");
+
+let editing = false;
+
+// ✅ LOAD LOGGED-IN USER
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+if (!currentUser) {
+  // Block access if not logged in
+  window.location.href = "login.html";
+}
+
+// Show name from login
+nameText.textContent = currentUser.fullName || currentUser.email;
+
+// Show avatar if saved
+if (currentUser.avatar) {
+  avatar.style.backgroundImage = `url(${currentUser.avatar})`;
+}
+
+editBtn.addEventListener("click", () => {
+  editing = !editing;
+
+  if (editing) {
+    // ENTER EDIT MODE
+    nameInput.value = nameText.textContent;
+    nameText.classList.add("hidden");
+    nameInput.classList.remove("hidden");
+    nameInput.focus();
+
+    editBtn.innerHTML =
+      `<span class="material-symbols-outlined">check</span>`;
+  } else {
+    // SAVE CHANGES
+    const newName = nameInput.value.trim() || "Player";
+    nameText.textContent = newName;
+
+    const avatarUrl = prompt(
+      "Enter image URL for profile picture:",
+      currentUser.avatar || ""
+    );
+
+    currentUser.fullName = newName;
+    if (avatarUrl) currentUser.avatar = avatarUrl;
+
+    // Persist updates
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    nameInput.classList.add("hidden");
+    nameText.classList.remove("hidden");
+
+    editBtn.innerHTML =
+      `<span class="material-symbols-outlined">edit</span>`;
+  }
+});
+</script>
+</body></html>

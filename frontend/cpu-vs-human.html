@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Human vs CPU</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+<style>
+.cell{
+  width:90px;height:90px;
+  background:#f1f4f3;
+  border-radius:1rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;font-weight:800;
+  cursor:pointer;transition:.2s;
+}
+.cell:hover{background:#e0f3ee;transform:scale(1.05);}
+.cell.x{color:#85e0d1}
+.cell.o{color:#92DFF7}
+.cell.x:hover,.cell.o:hover{background:#f1f4f3;transform:none}
+.active-turn-glow{box-shadow:0 0 20px rgba(133,224,209,.5)}
+</style>
+</head>
+
+<body class="bg-white font-[Plus_Jakarta_Sans] text-[#121716]">
+<div class="min-h-screen max-w-md mx-auto flex flex-col">
+<!-- HEADER -->
+<div class="flex items-center justify-between p-4">
+  <a href="home.html"
+     class="flex items-center justify-center w-10 h-10 rounded-full bg-[#f1f4f3] hover:bg-[#e0f3ee] transition">
+    <span class="material-symbols-outlined">close</span>
+  </a>
+</div>
+<!-- DIFFICULTY -->
+<div class="px-4">
+  <select id="difficulty" class="w-full p-3 rounded-xl bg-[#f1f4f3] font-bold">
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard" selected>Hard</option>
+  </select>
+</div>
+
+<!-- PLAYERS -->
+<div class="flex justify-center gap-10 items-center py-4">
+
+<!-- HUMAN -->
+<div id="p1Container" class="flex flex-col items-center gap-2">
+  <div id="p1Glow" class="p-1 rounded-full border-4 border-[#85e0d1] bg-[#85e0d1]/20 active-turn-glow">
+    <div class="h-16 w-16 rounded-full bg-[#85e0d1]/40"></div>
+  </div>
+  <span id="p1Badge" class="text-[10px] bg-[#85e0d1] text-white px-2 py-0.5 rounded-full">YOUR TURN</span>
+  <p class="font-bold">You</p>
+  <p class="text-[#85e0d1] font-black text-xl">X</p>
+</div>
+
+<!-- CPU -->
+<div id="p2Container" class="flex flex-col items-center gap-2 opacity-50 grayscale">
+  <div id="p2Glow" class="p-1 rounded-full border-4 border-transparent bg-[#92DFF7]/20">
+    <div class="h-16 w-16 rounded-full bg-[#92DFF7]/40"></div>
+  </div>
+  <span id="p2Badge" class="text-[10px] bg-[#92DFF7] text-white px-2 py-0.5 rounded-full hidden">CPU</span>
+  <p class="font-bold">CPU</p>
+  <p class="text-[#92DFF7] font-black text-xl">O</p>
+</div>
+
+</div>
+
+<!-- BOARD -->
+<div class="flex justify-center py-6">
+  <div id="board" class="grid grid-cols-3 gap-3 p-4 bg-[#e8efed] rounded-3xl">
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+  </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="p-4 space-y-3">
+  <button id="restartBtn" class="w-full bg-[#85e0d1] py-3 rounded-xl font-bold">
+    Restart
+  </button>
+</div>
+
+</div>
+
+<script>
+const cells=document.querySelectorAll(".cell");
+const restartBtn=document.getElementById("restartBtn");
+const difficultySelect=document.getElementById("difficulty");
+
+const p1Glow=document.getElementById("p1Glow");
+const p2Glow=document.getElementById("p2Glow");
+const p1Badge=document.getElementById("p1Badge");
+const p2Badge=document.getElementById("p2Badge");
+const p1Container=document.getElementById("p1Container");
+const p2Container=document.getElementById("p2Container");
+
+let board=Array(9).fill(null);
+let gameActive=true;
+let currentPlayer="X";
+
+const HUMAN="X", CPU="O";
+
+const wins=[
+[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]
+];
+
+function updateTurnUI(){
+  if(currentPlayer==="X"){
+    p1Glow.classList.add("active-turn-glow");
+    p2Glow.classList.remove("active-turn-glow");
+    p1Badge.classList.remove("hidden");
+    p2Badge.classList.add("hidden");
+    p2Container.classList.add("opacity-50","grayscale");
+  }else{
+    p2Glow.classList.add("active-turn-glow");
+    p1Glow.classList.remove("active-turn-glow");
+    p2Badge.classList.remove("hidden");
+    p1Badge.classList.add("hidden");
+    p2Container.classList.remove("opacity-50","grayscale");
+  }
+}
+updateTurnUI();
+
+cells.forEach((cell,i)=>{
+  cell.addEventListener("click",()=>{
+    if(!gameActive||board[i]||currentPlayer!==HUMAN) return;
+    move(i,HUMAN);
+    if(endGame(HUMAN)) return;
+    currentPlayer=CPU;updateTurnUI();
+    setTimeout(cpuMove,400);
+  });
+});
+
+function cpuMove(){
+  if(!gameActive) return;
+  const level=difficultySelect.value;
+  let moveIndex;
+
+  if(level==="easy") moveIndex=randomMove();
+  if(level==="medium") moveIndex=blockOrRandom();
+  if(level==="hard") moveIndex=winBlockOrRandom();
+
+  move(moveIndex,CPU);
+  if(endGame(CPU)) return;
+  currentPlayer=HUMAN;
+  updateTurnUI();
+}
+
+function move(i,p){
+  board[i]=p;
+  cells[i].textContent=p;
+  cells[i].classList.add(p.toLowerCase());
+}
+
+function randomMove(){
+  const empty=board.map((v,i)=>v?null:i).filter(v=>v!==null);
+  return empty[Math.floor(Math.random()*empty.length)];
+}
+
+function blockOrRandom(){
+  return findMove(HUMAN) ?? randomMove();
+}
+
+function winBlockOrRandom(){
+  return findMove(CPU) ?? findMove(HUMAN) ?? randomMove();
+}
+
+function findMove(player){
+  for(let w of wins){
+    const vals=w.map(i=>board[i]);
+    if(vals.filter(v=>v===player).length===2 && vals.includes(null))
+      return w[vals.indexOf(null)];
+  }
+  return null;
+}
+
+function endGame(player){
+  if(wins.some(w=>w.every(i=>board[i]===player))){
+    alert(player===HUMAN?"You Win!":"CPU Wins!");
+    gameActive=false;return true;
+  }
+  if(board.every(Boolean)){alert("Draw!");gameActive=false;return true;}
+  return false;
+}
+
+restartBtn.onclick=()=>{
+  board=Array(9).fill(null);
+  gameActive=true;
+  currentPlayer=HUMAN;
+  cells.forEach(c=>{c.textContent="";c.className="cell"});
+  updateTurnUI();
+};
+</script>
+
+</body>
+</html>

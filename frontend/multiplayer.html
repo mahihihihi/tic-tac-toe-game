@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Multiplayer Game Session</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#85e0d1",
+            secondary: "#92DFF7",
+            cell: "#f1f4f3"
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+/* ===== GAME CELL ===== */
+.cell {
+  width: 90px;
+  height: 90px;
+  background: #f9fbfa;
+  border-radius: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 3rem;
+  font-weight: 800;
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+/* ===== HOVER (only for empty cells) ===== */
+.cell:hover {
+  background: #e0f3ee;
+  transform: scale(1.04);
+}
+
+/* ===== X & O COLORS ===== */
+.cell.x {
+  color: #85e0d1;
+}
+
+.cell.o {
+  color: #92DFF7;
+}
+
+/* ===== DISABLE HOVER ON FILLED CELLS ===== */
+.cell.x:hover,
+.cell.o:hover {
+  background: #f9fbfa;
+  transform: none;
+  cursor: default;
+}
+
+/* ===== PLAYER TURN GLOW ===== */
+.active-turn-glow {
+  box-shadow: 0 0 20px rgba(133, 224, 209, 0.5);
+}
+
+  </style>
+</head>
+
+<body class="bg-white font-[Plus_Jakarta_Sans] text-[#121716]">
+<div class="min-h-screen max-w-md mx-auto flex flex-col">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between p-4">
+    <span class="material-symbols-outlined">close</span>
+    <p class="text-xs tracking-widest opacity-60">LOCAL MATCH</p>
+    <span class="material-symbols-outlined">settings</span>
+  </div>
+
+  <!-- PLAYERS + SCORE -->
+  <div class="flex justify-center gap-10 items-center py-4">
+
+    <!-- PLAYER 1 -->
+    <div id="p1Container" class="flex flex-col items-center gap-2">
+      <div id="p1Glow" class="p-1 rounded-full border-4 border-primary bg-primary/20 active-turn-glow">
+        <div class="h-16 w-16 rounded-full bg-primary/40"></div>
+      </div>
+      <span id="p1TurnBadge" class="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full">
+        YOUR TURN
+      </span>
+      <p class="font-bold">Player 1</p>
+      <p class="text-primary font-black text-xl">X</p>
+    </div>
+
+    <!-- SCORE -->
+    <div class="text-center">
+      <p class="text-2xl font-black">0 - 0</p>
+      <p class="text-[10px] opacity-40 tracking-widest">SCORE</p>
+    </div>
+
+    <!-- PLAYER 2 -->
+    <div id="p2Container" class="flex flex-col items-center gap-2 opacity-50 grayscale">
+      <div id="p2Glow" class="p-1 rounded-full border-4 border-transparent bg-secondary/20">
+        <div class="h-16 w-16 rounded-full bg-secondary/40"></div>
+      </div>
+      <span id="p2TurnBadge" class="text-[10px] bg-secondary text-white px-2 py-0.5 rounded-full hidden">
+        YOUR TURN
+      </span>
+      <p class="font-bold">Player 2</p>
+      <p class="text-secondary font-black text-xl">O</p>
+    </div>
+
+  </div>
+ <!-- GAME BOARD -->
+<div class="flex justify-center py-6">
+  <div
+    id="board"
+    class="grid grid-cols-3 gap-3 p-4 bg-[#e8efed] rounded-3xl"
+  >
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+  </div>
+</div>
+  <!-- ACTIONS -->
+  <div class="p-4 space-y-3">
+    <button id="restartBtn" class="w-full bg-primary py-3 rounded-xl font-bold flex justify-center gap-2">
+      <span class="material-symbols-outlined">refresh</span> Restart Match
+    </button>
+
+    <div class="flex gap-3">
+      <button class="flex-1 bg-cell py-2 rounded-xl font-bold">Undo</button>
+      <button
+  id="homeBtn"
+  class="flex-1 bg-cell py-2 rounded-xl font-bold"
+>
+  Home
+</button>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const cells = document.querySelectorAll(".cell");
+  const restartBtn = document.getElementById("restartBtn");
+const homeBtn = document.getElementById("homeBtn");
+  const p1Glow = document.getElementById("p1Glow");
+  const p2Glow = document.getElementById("p2Glow");
+  const p1Badge = document.getElementById("p1TurnBadge");
+  const p2Badge = document.getElementById("p2TurnBadge");
+  const p1Container = document.getElementById("p1Container");
+  const p2Container = document.getElementById("p2Container");
+
+  let board = Array(9).fill(null);
+  let currentPlayer = "X";
+  let gameActive = true;
+
+  const winPatterns = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  function updateTurnUI() {
+    if (currentPlayer === "X") {
+      p1Badge.classList.remove("hidden");
+      p2Badge.classList.add("hidden");
+      p1Glow.classList.add("active-turn-glow");
+      p2Glow.classList.remove("active-turn-glow");
+      p1Container.classList.remove("opacity-50","grayscale");
+      p2Container.classList.add("opacity-50","grayscale");
+    } else {
+      p2Badge.classList.remove("hidden");
+      p1Badge.classList.add("hidden");
+      p2Glow.classList.add("active-turn-glow");
+      p1Glow.classList.remove("active-turn-glow");
+      p2Container.classList.remove("opacity-50","grayscale");
+      p1Container.classList.add("opacity-50","grayscale");
+    }
+  }
+
+  updateTurnUI();
+
+  cells.forEach((cell, index) => {
+    cell.addEventListener("click", () => {
+      if (!gameActive || board[index]) return;
+
+      board[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer.toLowerCase());
+
+      if (winPatterns.some(p => p.every(i => board[i] === currentPlayer))) {
+        alert(`Player ${currentPlayer} wins!`);
+        gameActive = false;
+        return;
+      }
+
+      if (board.every(Boolean)) {
+        alert("Draw!");
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      updateTurnUI();
+    });
+  });
+
+  restartBtn.addEventListener("click", () => {
+    board = Array(9).fill(null);
+    gameActive = true;
+    currentPlayer = "X";
+
+    cells.forEach(cell => {
+      cell.textContent = "";
+      cell.classList.remove("x","o");
+    });
+
+    updateTurnUI();
+  });
+   homeBtn.addEventListener("click", () => {
+  window.location.href = "home.html";
+});
+</script>
+</body>
+</html>
