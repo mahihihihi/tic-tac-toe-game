@@ -95,19 +95,19 @@
 <div class="grid grid-cols-2 gap-4">
 <div class="bg-white dark:bg-zinc-800 p-5 rounded-xl soft-shadow border border-zinc-50 dark:border-zinc-700">
 <p class="text-zinc-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">Games</p>
-<p class="text-2xl font-extrabold tracking-tighter">152</p>
+<p id="gamesCount" class="text-2xl font-extrabold tracking-tighter">0</p>
 </div>
 <div class="bg-primary/10 dark:bg-primary/5 p-5 rounded-xl soft-shadow border border-primary/20">
 <p class="text-primary dark:text-primary text-xs font-bold uppercase tracking-widest mb-1">Wins</p>
-<p class="text-2xl font-extrabold tracking-tighter text-[#2D5A53] dark:text-primary">84</p>
+<p id="winsCount" class="text-2xl font-extrabold tracking-tighter">0</p>
 </div>
 <div class="bg-[#F9DCCF]/20 dark:bg-accent-peach/5 p-5 rounded-xl soft-shadow border border-[#F9DCCF]/40">
 <p class="text-[#E67E50] text-xs font-bold uppercase tracking-widest mb-1">Losses</p>
-<p class="text-2xl font-extrabold tracking-tighter text-[#E67E50]">42</p>
+<p id="lossesCount" class="text-2xl font-extrabold tracking-tighter">0</p>
 </div>
 <div class="bg-accent-yellow/30 dark:bg-accent-yellow/5 p-5 rounded-xl soft-shadow border border-accent-yellow">
 <p class="text-[#B59B00] text-xs font-bold uppercase tracking-widest mb-1">Draws</p>
-<p class="text-2xl font-extrabold tracking-tighter text-[#B59B00]">26</p>
+<p id="drawsCount" class="text-2xl font-extrabold tracking-tighter">0</p>
 </div>
 </div>
 </section>
@@ -128,7 +128,24 @@ if (!currentUser) {
   // Block access if not logged in
   window.location.href = "login.html";
 }
+// 🔢 LOAD REAL STATISTICS
+const gamesEl = document.getElementById("gamesCount");
+const winsEl = document.getElementById("winsCount");
+const lossesEl = document.getElementById("lossesCount");
+const drawsEl = document.getElementById("drawsCount");
 
+// Safe defaults (first-time users)
+const wins = currentUser.wins || 0;
+const losses = currentUser.losses || 0;
+const draws = currentUser.draws || 0;
+
+const games = wins + losses + draws;
+
+// Inject into UI
+gamesEl.textContent = games;
+winsEl.textContent = wins;
+lossesEl.textContent = losses;
+drawsEl.textContent = draws;
 // Show name from login
 nameText.textContent = currentUser.fullName || currentUser.email;
 

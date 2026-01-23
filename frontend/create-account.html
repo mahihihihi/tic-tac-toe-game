@@ -147,8 +147,16 @@ document.getElementById("registerForm").addEventListener("submit", function (e) 
     return;
   }
 
-  users.push({ fullName, email, password });
-  localStorage.setItem("users", JSON.stringify(users));
+ users.push({
+  fullName,
+  email,
+  password,
+  wins: 0,
+  losses: 0,
+  draws: 0,
+  avatar: ""
+});
+
 
   alert("Account created successfully!");
   window.location.href = "login.html";

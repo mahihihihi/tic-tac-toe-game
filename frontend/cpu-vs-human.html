@@ -181,14 +181,49 @@ function findMove(player){
 }
 
 function endGame(player){
+  let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
   if(wins.some(w=>w.every(i=>board[i]===player))){
-    alert(player===HUMAN?"You Win!":"CPU Wins!");
-    gameActive=false;return true;
+    
+    if(currentUser){
+      if(player === HUMAN){
+        currentUser.wins = (currentUser.wins || 0) + 1;
+      } else {
+        currentUser.losses = (currentUser.losses || 0) + 1;
+      }
+
+      users = users.map(u =>
+        u.email === currentUser.email ? currentUser : u
+      );
+
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    alert(player === HUMAN ? "You Win!" : "CPU Wins!");
+    gameActive = false;
+    return true;
   }
-  if(board.every(Boolean)){alert("Draw!");gameActive=false;return true;}
+  if(board.every(Boolean)){
+    if(currentUser){
+      currentUser.draws = (currentUser.draws || 0) + 1;
+
+      users = users.map(u =>
+        u.email === currentUser.email ? currentUser : u
+      );
+
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    alert("Draw!");
+    gameActive = false;
+    return true;
+  }
+
   return false;
 }
-
 restartBtn.onclick=()=>{
   board=Array(9).fill(null);
   gameActive=true;
