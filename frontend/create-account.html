@@ -139,24 +139,26 @@ document.getElementById("registerForm").addEventListener("submit", function (e) 
     return;
   }
 
-  const users = JSON.parse(localStorage.getItem("users")) || [];
+  let users = JSON.parse(localStorage.getItem("users")) || [];
 
-  // Prevent duplicate emails
   if (users.find(u => u.email === email)) {
     alert("Account already exists with this email.");
     return;
   }
 
- users.push({
-  fullName,
-  email,
-  password,
-  wins: 0,
-  losses: 0,
-  draws: 0,
-  avatar: ""
-});
+  const newUser = {
+    fullName,
+    email,
+    password,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    avatar: ""
+  };
 
+  users.push(newUser);
+
+  localStorage.setItem("users", JSON.stringify(users));
 
   alert("Account created successfully!");
   window.location.href = "login.html";
